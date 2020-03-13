@@ -1,9 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
+import { Image, Text, View, Button, TextInput } from 'react-native';
 import { NavigationContainer} from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import Constants from 'expo-constants';
+import { isRequired } from 'react-native/Libraries/DeprecatedPropTypes/DeprecatedColorPropType';
 
 
 
@@ -17,6 +18,10 @@ function HomeScreen({route, navigation}){
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>KIEU VAN TRUYEN HOME APP</Text>
+      {/* <Button 
+        title = "Update Title screen "
+        onPress = {() => navigation.setOptions({title: 'Updated'})}/> */}
+
       <Button 
         title="Detail screen" 
         onPress={() => navigation.navigate(
@@ -28,7 +33,8 @@ function HomeScreen({route, navigation}){
 
       <Button
         title = "Create Post"
-        onPress = {() => navigation.navigate('CreatePost')}/>
+        // name ở đây phải tương ứng với name khai bao o stack
+        onPress = {() => navigation.navigate('CreatePost', { name: 'Create Post Screen'})}/>
       <Text style={{ margin: 10 }}>Post: {route.params?.post}</Text>
     </View>
     
@@ -114,16 +120,25 @@ function CreatePostScreen({navigation, route}){
   );
 }
 
+function LogoTitle(){
+  return (
+    <Image
+      style={{ width: 50, height: 50}}
+      source= {require('./assets/truyen.jpg')}
+    />
+  ); 
+}
+
 const Stack = createStackNavigator();
 
 function App(){
   return(
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Home Page' }} />
+        <Stack.Screen name="Home" component={HomeScreen} options={{ headerTitle: props => <LogoTitle {...props} />, headerStyle: { backgroundColor: '#f4511e',headerTintColor: '#fff', headerTitleStyle: { fontWeight: 'bold',},}}} />
         <Stack.Screen name="Detail" component={DetailScreen} />
         <Stack.Screen name="Param" component={ParamScreen} initialParams = {{ itemId: Math.floor(Math.random()*100) }}/>
-        <Stack.Screen name="CreatePost" component={CreatePostScreen} />
+        <Stack.Screen name="CreatePost" component={CreatePostScreen} options = {({route}) => ({ title: route.params.name})} />
       </Stack.Navigator>
     </NavigationContainer>
   );
